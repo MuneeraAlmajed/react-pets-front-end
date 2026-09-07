@@ -3,6 +3,9 @@ import * as petService from "./services/petService";
 import PetList from "./components/PetList/PetList";
 import PetDetail from "./components/PetDetail/PetDetail";
 import PetForm from "./components/PetForm/PetForm";
+import './App.css';
+
+
 
 const App = () => {
   const [pets, setPets] = useState([]);

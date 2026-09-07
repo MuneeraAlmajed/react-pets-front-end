@@ -32,7 +32,7 @@ const PetForm = (props) => {
   };
 
   return (
-    <div>
+    <div className='form-container'>
       <h1>{props.selected ? 'Update Pet' : 'Add Pet'}</h1>
 
       <form onSubmit={handleSubmit}>
