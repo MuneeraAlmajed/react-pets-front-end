@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as petService from './services/petService';
 import PetList from './components/PetList/PetList';
+import PetDetail from './components/PetDetail/PetDetail';
 
 const App = () => {
   const [pets, setPets] = useState([]);
@@ -24,7 +25,6 @@ const App = () => {
     allPets();
   }, []);
 
-  // Handles selecting a pet
   const handleSelect = (pet) => {
     setSelectedPet(pet);
   };
@@ -38,15 +38,7 @@ const App = () => {
 
       <h2>Details Page</h2>
 
-      {selectedPet ? (
-        <div>
-          <h3>{selectedPet.name}</h3>
-          <p>Species: {selectedPet.species}</p>
-          <p>Age: {selectedPet.age}</p>
-        </div>
-      ) : (
-        <p>Select a pet to see its details.</p>
-      )}
+      <PetDetail selected={selectedPet} />
     </div>
   );
 };
