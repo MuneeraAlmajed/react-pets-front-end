@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import * as petService from './services/petService';
-import PetList from './components/PetList/PetList';
-import PetDetail from './components/PetDetail/PetDetail';
-import PetForm from './components/PetForm/PetForm';
+import { useState, useEffect } from "react";
+import * as petService from "./services/petService";
+import PetList from "./components/PetList/PetList";
+import PetDetail from "./components/PetDetail/PetDetail";
+import PetForm from "./components/PetForm/PetForm";
 
 const App = () => {
   const [pets, setPets] = useState([]);
@@ -29,48 +29,95 @@ const App = () => {
 
   const handleSelect = (pet) => {
     setSelectedPet(pet);
-    // setIsFormOpen(false);
   };
 
-  const handleFormView = () =>{
+  const handleFormView = (pet) => {
+    if (!pet?._id) {
+      setSelectedPet(null);
+    } else {
+      setSelectedPet(pet);
+    }
+
     setIsFormOpen(!isFormOpen);
-  }
+  };
 
-  const handleAddPet = async(formData) => {
-    try{
-
+  const handleAddPet = async (formData) => {
+    try {
       const newPet = await petService.create(formData);
 
-      if(newPet.err){
+      if (newPet.err) {
         throw new Error(newPet.err);
       }
 
-      setPets([newPet, ...pets]);
-
-      //reset the form 
+      setPets([...pets, newPet]);
+      setSelectedPet(newPet);
       setIsFormOpen(false);
-    }catch(err){
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleUpdatePet = async (formData, petId) => {
+    try {
+      const updatedPet = await petService.update(formData, petId);
+
+      if (updatedPet.err) {
+        throw new Error(updatedPet.err);
+      }
+
+      const updatedPetList = pets.map((pet) =>
+        pet._id !== updatedPet._id ? pet : updatedPet,
+      );
+
+      setPets(updatedPetList);
+      setSelectedPet(updatedPet);
+      setIsFormOpen(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDeletePet = async (petId) => {
+    try {
+      const deletedPet = await petService.deletePet(petId);
+
+      if (deletedPet.err) {
+        throw new Error(deletedPet.err);
+      }
+
+      const updatedPetList = pets.filter((pet) => pet._id !== deletedPet._id);
+
+      setPets(updatedPetList);
+      setSelectedPet(null);
+      setIsFormOpen(false);
+    } catch (err) {
       console.log(err);
     }
   };
 
   return (
-    <div>
+    <>
       <PetList
         pets={pets}
         handleSelect={handleSelect}
         handleFormView={handleFormView}
         isFormOpen={isFormOpen}
       />
+
       {isFormOpen ? (
-        <PetForm handleAddPet={handleAddPet}/>
-      ):(
-        <PetDetail selected={selectedPet} />
-
+        <PetForm
+          handleAddPet={handleAddPet}
+          selected={selectedPet}
+          handleUpdatePet={handleUpdatePet}
+        />
+      ) : (
+        <PetDetail
+          selected={selectedPet}
+          handleFormView={handleFormView}
+          handleDeletePet={handleDeletePet}
+        />
       )}
-
-
-    </div>
+    </>
   );
 };
 
