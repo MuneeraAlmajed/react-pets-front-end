@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import * as petService from './services/petService';
 import PetList from './components/PetList/PetList';
 import PetDetail from './components/PetDetail/PetDetail';
+import PetForm from './components/PetForm/PetForm';
 
 const App = () => {
   const [pets, setPets] = useState([]);
   const [selectedPet, setSelectedPet] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     async function allPets() {
@@ -27,18 +29,30 @@ const App = () => {
 
   const handleSelect = (pet) => {
     setSelectedPet(pet);
+    // setIsFormOpen(false);
   };
+
+  const handleFormView = () =>{
+    setIsFormOpen(!isFormOpen);
+  }
 
   return (
     <div>
       <PetList
         pets={pets}
         handleSelect={handleSelect}
+        handleFormView={handleFormView}
+        isFormOpen={isFormOpen}
       />
+      {isFormOpen ? (
+        <PetForm />
 
-      <h2>Details Page</h2>
+      ):(
+        <PetDetail selected={selectedPet} />
 
-      <PetDetail selected={selectedPet} />
+      )}
+
+
     </div>
   );
 };
